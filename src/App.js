@@ -1,10 +1,9 @@
 import React from 'react';
 import './App.css';
-import Header from './components/Header';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
-import Home from './components/home/Home';
-import Checkout from './components/basket/Checkout';
 import Login from './components/login/Login';
+import HomePage from "./components/HomePage";
+import CheckoutPage from './components/CheckoutPage';
 
 // npm install react-router-dom
 
@@ -12,11 +11,10 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <Header />
         <Routes>  
           <Route path="/login" element={<Login />}/>
-          <Route path="/" element={<Home />} />
-          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
         </Routes>
       </div>
     </Router>    
