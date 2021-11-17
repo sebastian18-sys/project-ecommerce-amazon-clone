@@ -54,6 +54,7 @@
     border: 1px solid;
     margin-top: 10px;
     border-color: #a88734 #9c7e31 #846a29;
+    cursor: pointer;
 }
 
 .login__registerButton {
@@ -63,4 +64,40 @@
     border: 1px solid;
     margin-top: 10px;
     border-color: darkgray;
+    cursor: pointer;
+}
+
+.login__register {
+    text-align: center;
+    position: relative;
+    /* margin: 20px 0; */
+    line-height: 0;
+    padding: 20px;
+    margin-bottom: 14px;
+    
+}
+
+.login__register > h5 {
+    position: relative;
+    width: 100%;
+    color: #767676;
+    line-height: 1;
+    z-index: 99;
+    display: inline-block;
+    font-weight: 400;
+    font-size: 12px;
+    background-color: #fff;
+    
+}
+
+.login__register > h5::after {
+    content: "";
+    width: 100%;
+    background-color: transparent;
+    display: block;
+    border-top: 1px solid #e7e7e7;
+    position: absolute;
+    top: 50%;
+    z-index: -1;    
+    height: 1px;
 }
