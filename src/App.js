@@ -7,6 +7,7 @@ import CheckoutPage from './components/CheckoutPage';
 import { auth } from "./firebase";
 import { onAuthStateChanged } from "firebase/auth"
 import { useStateValue } from './StateProvider';
+import PaymentPage from './components/PaymentPage';
 
 // npm install react-router-dom
 
@@ -41,6 +42,7 @@ function App() {
           <Route path="/login" element={<Login />}/>
           <Route path="/" element={<HomePage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/payment" element={<PaymentPage />} />
         </Routes>
       </div>
     </Router>    
