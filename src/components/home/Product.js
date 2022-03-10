@@ -1,15 +1,19 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import { useStateValue } from '../../StateProvider';
-import "./Product.css"
+import "./Product.css";
+import { useLocalStorage } from "../../hooks/useLocalStorage";
 
 function Product({ id, title, image, price, rating }) {
 
     const [{ basket }, dispatch] = useStateValue();
 
+    
+    const [item, setItem] = useLocalStorage("item", basket);
+    console.log("item", item);
     console.log("basket", basket);
 
     const addToBasket = () => {
-        // dispatch
+        // setItem(basket);
         dispatch({
             type: "ADD_TO_BASKET",
             item: {
@@ -20,7 +24,14 @@ function Product({ id, title, image, price, rating }) {
                 rating: rating
             }
         })
+        // window.localStorage.setItem("data", JSON.stringify(basket));
     }
+
+    // save info falta
+    // useEffect(() => {
+    //     setItem(basket);
+    // }, [basket])
+    
 
     return (
         <div className="product">
@@ -32,16 +43,14 @@ function Product({ id, title, image, price, rating }) {
                 </p>
                 <div className="product__rating">
                     {Array(rating).fill().map((_, i) => 
-                        <p>⭐</p>
+                        <p key={i}>⭐</p>
                     )}
                 </div>
             </div>
-            <img src={image}></img>
-            <button onClick={addToBasket}>Add to Basket</button>
+            <img src={image} alt="product" />
+            <button onClick={addToBasket}>Add to Cart</button>
         </div>
     );
 }
-
-// 2:12:28
 
 export default Product

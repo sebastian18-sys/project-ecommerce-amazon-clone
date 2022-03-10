@@ -1,9 +1,8 @@
 import axios from "axios"
 
-// npm install axios
-
 const instance = axios.create({
-    baseURL: "..." //API URL backend
+    //API URL backend
+    baseURL: "http://localhost:5001/clone-2d1fc/us-central1/api"
 });
 
 export default instance;

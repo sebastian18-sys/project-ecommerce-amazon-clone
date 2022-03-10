@@ -9,34 +9,34 @@ import { auth } from '../firebase';
 
 function Header() {
 
-    const [{ basket, user }, dispatch] = useStateValue();
+    const [{ basket, user }] = useStateValue();
 
     const handleAuthentication = () => {
-        if(user) {
-            signOut(auth);
-        }
+        if(user) signOut(auth);
     }
 
     return (
-        <div className='header'>
+        <header className='header'>
             <Link to="/">
-                <img className='header__logo' src='https://pngimg.com/uploads/amazon/amazon_PNG11.png'></img>
+                <img loading='lazy' className='header__logo' src='https://pngimg.com/uploads/amazon/amazon_PNG11.png' alt='logo amazon' />
             </Link>
             <div className='header__search'>
                 <input className="header__searchInput" type="text"></input>
                 <SearchIcon className="header__searchIcon"/>
             </div>
-            <div className="header__nav">
+            <nav className="header__nav">
                 <Link to={!user && "/login"}>
                     <div onClick={handleAuthentication} className="header__option">
                         <span className="header__optionLineOne">Hello {user ? user.email : "Guest"}</span>
                         <span className="header__optionLineTwo">{user ? "Sign Out" : "Sign In"}</span>
                     </div>
                 </Link>
-                <div className="header__option">
-                    <span className="header__optionLineOne">Returns</span>
-                    <span className="header__optionLineTwo">& Orders</span>
-                </div>
+                <Link to="/orders">
+                    <div className="header__option">
+                        <span className="header__optionLineOne">Returns</span>
+                        <span className="header__optionLineTwo">& Orders</span>
+                    </div>
+                </Link>
                 <div className="header__option">
                     <span className="header__optionLineOne">Your</span>
                     <span className="header__optionLineTwo">Prime</span>
@@ -47,11 +47,9 @@ function Header() {
                         <span className="header__optionLineTwo header__basketCount">{basket?.length}</span>
                     </div>
                 </Link>
-            </div>
-        </div>
+            </nav>
+        </header>
     )
 }
-
-// 4:30:19
 
 export default Header

@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom';
-import { useStateValue } from '../../StateProvider'
-import CheckoutProduct from '../basket/CheckoutProduct';
 import "./Payment.css"
+import { Link, useNavigate } from 'react-router-dom';
+import { useStateValue } from '../../StateProvider'
+import { getBasketTotal } from '../../reducer';
+import CheckoutProduct from '../basket/CheckoutProduct';
 import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import CurrencyFormat from 'react-currency-format';
-import { getBasketTotal } from '../../reducer';
-import { useNavigate } from "react-router-dom";
-import axios from "../../axios";
-
-// npm install @stripe/stripe-js
-// npm install @stripe/react-stripe-js
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "../../firebase";
+import { getClientSecret } from '../../services/getClientSecret';
 
 function Payment() {
 
@@ -30,36 +28,35 @@ function Payment() {
     const [clientSecret, setClientSecret] = useState(true);
 
     useEffect(() => {
-        // general stripe secret
-        const getClientSecret = async () => {
-            const response = await axios({
-                method: "post",
+        getClientSecret(getBasketTotal(basket)).then((client) => {
+            setClientSecret(client.clientSecret);
+        })
+    }, [])
 
-                // Stripe expectss the total in currencies subunits
-                url: `/payment/create?total=${getBasketTotal(basket) * 100}`
-            }); 
-            setClientSecret(response.data.clientSecret)
-        }
-
-        getClientSecret();
-    }, [basket])
-
-    console.log("Secret is: ", clientSecret)
-
-    const handleSubmit = async e => {
+    const handleSubmit = e => {
         e.preventDefault();
         setProcessing(true);
 
         // confirm exist payment
-        const payload = await stripe.confirmCardPayment(clientSecret , {
+        stripe.confirmCardPayment(clientSecret , {
             payment_method: {
                 card: elements.getElement(CardElement)
             }
         }).then(({ paymentIntent }) => {
-            // paymentIntent = payment confirmation
+            // Insert to Database in Firestore
+            setDoc(doc(db, "users", user?.uid, "orders", paymentIntent.id), {
+                basket: basket,
+                amount: paymentIntent.amount,
+                created: paymentIntent.created
+            })
+
             setSucceeded(true);
             setError(null);
             setProcessing(false);
+
+            dispatch({
+                type: 'EMPTY_BASKET'    
+            })  
 
             navigate("/orders")
         }) 
@@ -94,14 +91,16 @@ function Payment() {
                         <h3>Review items and delivery</h3>
                     </div>
                     <div className="payment__items">
-                        {basket.map((item) => (
-                            <CheckoutProduct 
-                                id = {item.id}
-                                title = {item.title}
-                                image = {item.image}
-                                price = {item.price}
-                                rating = {item.rating}
-                            />
+                        {basket.map((item, index) => (
+                            <div key={index}>
+                                <CheckoutProduct 
+                                    id = {item.id}
+                                    title = {item.title}
+                                    image = {item.image}
+                                    price = {item.price}
+                                    rating = {item.rating}
+                                />
+                            </div>
                         ))}
                     </div>
                 </div>
@@ -113,9 +112,10 @@ function Payment() {
                     <div className="payment__details">
                         {/* Stripe Magic */}
                         <form onSubmit={handleSubmit}>
+                            <p>Información de la tarjeta</p>
                             {/* Collect all details credit card */}
-                            <CardElement onChange={handleChange} />
-                            {/* <CardNumberElement /> -> Collect number card */}
+                            <CardElement className='payment__cardContainer' onChange={handleChange} />
+                            {/* <CardNumberElement />  -> Collect number card */}
                             {/* <CardExpiryElement /> -> Collect Expiry card */}
                             {/* <CardCvcElement /> -> Collect CVC card */}
                             <div className="payment__priceContainer">
@@ -142,7 +142,5 @@ function Payment() {
         </div>
     )
 }
-
-// 6:35:11
 
 export default Payment
